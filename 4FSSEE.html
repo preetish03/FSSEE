@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Zoo</title>
+  </head>
+  <body>
+    <h1>Zoo</h1>
+    <h2>Add Animal</h2>
+    <input type="text" id="name" placeholder="Name" />
+    <input type="number" id="lifespan" placeholder="Lifespan" />
+    <button onclick="handleAddAnimal()">Add Animal</button>
+
+    <h2>Animals</h2>
+    <ul id="animals"></ul>
+
+    <h2>Animals Alive After N Years</h2>
+    <input type="number" id="years" placeholder="Years" onchange="renderAnimalsAlive()" />
+    <p id="animals-alive"></p>
+
+    <script>
+      class Animal {
+        constructor(name, lifespan) {
+          this.name = name;
+          this.lifespan = lifespan;
+        }
+      }
+
+      class Zoo {
+        constructor() {
+          this.animals = [];
+        }
+
+        addAnimal(animal) {
+          this.animals.push(animal);
+        }
+
+        updateAnimal(index, newName, newLifespan) {
+          if (index >= 0 && index < this.animals.length) {
+            const animal = this.animals[index];
+            animal.name = newName;
+            animal.lifespan = newLifespan;
+          }
+        }
+
+        deleteAnimal(index) {
+          if (index >= 0 && index < this.animals.length) {
+            this.animals.splice(index, 1);
+          }
+        }
+
+        animalsAliveAfterNYears(n) {
+          let count = 0;
+          for (let animal of this.animals) {
+            if (animal.lifespan >= n) {
+              count++;
+            }
+          }
+          return count;
+        }
+      }
+
+      const zoo = new Zoo();
+
+      function handleAddAnimal() {
+        const nameInput = document.querySelector("#name");
+        const lifespanInput = document.querySelector("#lifespan");
+
+        const name = nameInput.value;
+        const lifespan = parseInt(lifespanInput.value);
+
+        const animal = new Animal(name, lifespan);
+        zoo.addAnimal(animal);
+
+        nameInput.value = "";
+        lifespanInput.value = "";
+
+        renderAnimals();
+      }
+
+      function handleUpdateAnimal(index) {
+        const newName = prompt("Enter the new name:");
+        const newLifespan = parseInt(prompt("Enter the new lifespan:"));
+
+        zoo.updateAnimal(index, newName, newLifespan);
+        renderAnimals();
+      }
+
+      function handleDeleteAnimal(index) {
+        zoo.deleteAnimal(index);
+        renderAnimals();
+      }
+
+      function renderAnimals() {
+        const animalsList = document.querySelector("#animals");
+        animalsList.innerHTML = "";
+
+        for (let i = 0; i < zoo.animals.length; i++) {
+          const animal = zoo.animals[i];
+          const li = document.createElement("li");
+          li.textContent = `${animal.name} - ${animal.lifespan}`;
+          animalsList.appendChild(li);
+
+          const updateButton = document.createElement("button");
+          updateButton.textContent = "Update";
+          updateButton.onclick = () => handleUpdateAnimal(i);
+          li.appendChild(updateButton);
+
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.onclick = () => handleDeleteAnimal(i);
+          li.appendChild(deleteButton);
+        }
+
+        renderAnimalsAlive();
+      }
+
+      function renderAnimalsAlive() {
+        const yearsInput = document.querySelector("#years");
+        const years = parseInt(yearsInput.value);
+
+        const animalsAlive = zoo.animalsAliveAfterNYears(years);
+        const animalsAliveElement = document.querySelector("#animals-alive");
+        animalsAliveElement.textContent = `Animals alive after ${years} years: ${animalsAlive}`;
+      }
+    </script>
+  </body>
+</html>
+
+
+  
